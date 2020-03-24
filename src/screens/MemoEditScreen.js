@@ -16,7 +16,7 @@ class MemoEditScreen extends React.Component {
   }
 }
 
-const styles = StyleSheet.creat({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
