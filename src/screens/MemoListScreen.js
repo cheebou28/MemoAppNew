@@ -9,7 +9,7 @@ class MemoListScreen extends React.Component {
     return (
       <View styles={styles.container}>
         <MemoList />
-        <CircleButton>+</CircleButton>
+        <CircleButton>{'\uf067'}</CircleButton>
       </View>
     );
   }
