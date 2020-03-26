@@ -15,7 +15,8 @@
        "key-spacing": 0,
        "object-curly-newline": 0,
        "max-len": 0,
-       "react/jsx-one-expression-per-line": 0
+       "react/jsx-one-expression-per-line": 0,
+       "react/jsx-no-bind": 0
      },
  "parser": "babel-eslint"
 }
