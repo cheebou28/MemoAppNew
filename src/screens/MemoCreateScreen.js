@@ -1,11 +1,28 @@
 import React from 'react';
 import { StyleSheet, View, TextInput } from 'react-native';
+import firebase from 'firebase';
 
 import CircleButton from '../elements/CircleButton';
 
 class MemoCreateScreen extends React.Component {
   state = {
     body: '',
+  }
+
+  handlePress() {
+    const db = firebase.firestore();
+    const { currentUser } = firebase.auth();
+    db.settings({ timestampsInSnapshots: true });
+    db.collection(`users//${currentUser.uid}/memos`).add({
+      body: this.state.body,
+      createdOn: new Date(),
+    })
+      .then((docRef) => {
+        console.log(docRef.id);
+      })
+      .catch((error) => {
+      console.log(error);
+      });
   }
 
   render() {
@@ -17,7 +34,7 @@ class MemoCreateScreen extends React.Component {
           value={this.state.body}
           onChangeText={(text) => { this.setState({ body: text }); }}
         />
-        <CircleButton onPress={() => { this.props.navigation.goBack(); }}>
+        <CircleButton onPress={this.handlePress.bind(this)}>
           {'\uf00c'}
         </CircleButton>
       </View>

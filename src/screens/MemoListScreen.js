@@ -1,37 +1,47 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import firebase from 'firebase';
+
 import MemoList from '../components/MemoList';
 import CircleButton from '../elements/CircleButton';
 
 class MemoListScreen extends React.Component {
-  // eslint-disable-next-line
-handlePress() {
-    const { params } = this.props.navigation.state;
-    const db = firebase.firestore();
-    db.settings({ timestampsInSnapshots: true });
-    db.collection(`users//${params.currentUser.uid}/memos`).add({
-      body: 'test memo',
-      createdOn: '2017-12-1',
+state = {
+  memoList: [],
+}
+
+componentDidMount() {
+  const { currentUser } = firebase.auth();
+  const db = firebase.firestore();
+  db.collection(`users/${currentUser.uid}/memos`)
+    .get()
+    .then((snapshot) => {
+      const memoList = [];
+      snapshot.forEach((doc) => {
+        console.log(doc.data());
+        memoList.push(doc.data());
+      });
+      this.setState({ memoList });
     })
-    .then((docRef) => {
-    　console.log(docRef.id);
-    })
-    .catch((error) =>
+    .catch((error) => {
       console.log(error);
     });
 }
 
-  render() {
-    return (
-      <View styles={styles.container}>
-        <MemoList navigation={this.props.navigation} />
-        <CircleButton onPress={this.handlePress.bind(this)}>
-          {'\uf067'}
-        </CircleButton>
-      </View>
-    );
-  }
+handlePress() {
+  this.props.navigation.navigate('MemoCreate');
+}
+
+render() {
+  return (
+    <View styles={styles.container}>
+      <MemoList memoList={this.state.memoList} navigation={this.props.navigation} />
+      <CircleButton onPress={this.handlePress.bind(this)}>
+        {'\uf067'}
+      </CircleButton>
+    </View>
+  );
+}
 }
 const styles = StyleSheet.create({
   container: {
