@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableHightlight } from 'react-native';
 import firebase from 'firebase';
+import { StackActions } from 'react-navigation';
 
 class SignupScreen extends React.Component {
   state = {
@@ -10,11 +11,16 @@ class SignupScreen extends React.Component {
 
   hundleSubmit() {
     firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then((user) => {
-        this.props.navigation.navigate('HOME');
+      .then(() => {
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [
+            StackActions.navigate({ routeName: 'HOME' }),
+          ],
+        });
+        this.props.navigation.dispatch(resetAction);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
       });
   }
 
@@ -41,7 +47,7 @@ class SignupScreen extends React.Component {
           placeholder="password"
           secureTextEntry
         />
-        <TouchableHightlight style={styles.button} onPress={this.handleSubmit.bind{this}} underlayColor="#C70F66">
+        <TouchableHightlight style={styles.button} onPress={this.handleSubmit.bind(this)} underlayColor="#C70F66">
           <Text style={styles.buttonTitle}>送信する</Text>
         </TouchableHightlight>
       </View>
