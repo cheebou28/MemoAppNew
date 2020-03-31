@@ -1,24 +1,47 @@
 import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableHightlight, TouchableOpacity } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { StyleSheet, View, Text, TextInput, TouchableHighlight, TouchableOpacity } from 'react-native';
 import firebase from 'firebase';
-import { StackActions } from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
+
+import Loading from '../elements/Loading';
 
 class LoginScreen extends React.Component {
   state = {
-    email: '',
-    password: '',
+    email: 'user1@example.com',
+    password: 'password',
+    isLoading: false,
+  }
+
+  async componentDidMount() {
+    /*
+    const email = await SecureStore.getItemAsync('email');
+    const password = await SecureStore.getItemAsync('password');
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(() => {
+        this.setState({ isLoading: false });
+        this.navigateToHome();
+      })
+      .catch();
+    */
+  }
+
+  navigateToHome() {
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'Home' }),
+      ],
+    });
+    this.props.navigation.dispatch(resetAction);
   }
 
   handleSubmit() {
     firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(() => {
-        const resetAction = StackActions.reset({
-          index: 0,
-          actions: [
-            StackActions.navigate({ routeName: 'HOME' }),
-          ],
-        });
-        this.props.navigation.dispatch(resetAction);
+        SecureStore.setItemAsync('email', this.state.email);
+        SecureStore.setItemAsync('password', this.state.password);
+        this.navigateToHome();
       })
       .catch();
   }
@@ -30,6 +53,7 @@ class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <Loading text="ログイン中" isLoading={this.state.isLoading} />
         <Text style={styles.title}>
           ログイン
         </Text>
@@ -52,11 +76,11 @@ class LoginScreen extends React.Component {
           secureTextEntry
           underlineColorAndroid="transparent"
         />
-        <TouchableHightlight style={styles.button} onPress={this.handleSubmit.bind(this)}>
+        <TouchableHighlight style={styles.button} onPress={this.handleSubmit.bind(this)} underlayColor="#C70F66">
           <Text style={styles.buttonTitle}>ログインする</Text>
-        </TouchableHightlight>
+        </TouchableHighlight>
 
-        <TouchableOpacity style={styles.signup} onPress={this.handlePress.bind(this)} underlayColor="#C70F66">
+        <TouchableOpacity style={styles.signup} onPress={this.handlePress.bind(this)}>
           <Text style={styles.signupText}>メンバー登録する</Text>
         </TouchableOpacity>
       </View>
@@ -80,7 +104,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     alignSelf: 'center',
     marginBottom: 24,
   },
